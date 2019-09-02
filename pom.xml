@@ -8,6 +8,9 @@
     <artifactId>chat</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <modules>
         <module>server</module>
@@ -34,3 +37,8 @@
         </dependency>
     </dependencies>
 </project>
+<!--
+java -jar server/target/server-1.0-SNAPSHOT.jar
+java -jar client/target/client-1.0-SNAPSHOT.jar
+-->
+
