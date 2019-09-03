@@ -6,13 +6,14 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
     private Map<SocketChannel, UserSession> users = new HashMap<>();
     private Queue<UserSession> freeAgents = new ArrayDeque<>();
 
     public void start() {
-        new Thread(() -> {
+        //new Thread(() -> {
         try {
             Selector selector = Selector.open();
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -41,7 +42,7 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        }).start();
+        //}).start();
     }
 
     private void accept(SelectionKey key) throws IOException {
@@ -60,17 +61,17 @@ public class Server {
     private void read(SelectionKey key) throws IOException {
         SocketChannel channel = ((SocketChannel) key.channel());
         String str = readChannel(channel);
-        if (str.startsWith("/register")) {
-            if (str.indexOf("agent") == 10)
+        if (str.startsWith("/register ")) {
+            if (str.indexOf("agent ") == 10)
                 registerUser(channel, false, str.substring(16));
-            else if (str.indexOf("client") == 10)
+            else if (str.indexOf("client ") == 10)
                 registerUser(channel, true, str.substring(17));
             else {
                 //TODO ask to repeat
             }
-        } else if (str.startsWith("/leave"))
+        } else if (str.equals("/leave"))
             exit(channel, true);
-        else if (str.startsWith("/exit"))
+        else if (str.equals("/exit"))
             exit(channel, false);
         else
             redirect(channel, str);
@@ -112,9 +113,7 @@ public class Server {
         ByteBuffer bb = ByteBuffer.allocate(1000);
         channel.read(bb);
         bb.flip();
-        byte[] byteArray = new byte[1000];
-        bb.get(byteArray);
-        String str = new String(byteArray);
+        String str = new String(bb.array());
         bb.clear();
         return str;
     }

@@ -7,9 +7,9 @@ public class Client {
         try {
             Socket socket = new Socket("localhost", 9876);
             BufferedReader sockIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter sockOut = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            PrintStream sockOut = new PrintStream(socket.getOutputStream());
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out));
+            PrintStream out = System.out;
 
             new Thread(() -> {
                 transfer(in, sockOut);
@@ -24,10 +24,11 @@ public class Client {
         }
     }
 
-    private void transfer(BufferedReader from, BufferedWriter to) {
+    private void transfer(BufferedReader from, PrintStream to) {
         try {
-            to.write(from.readLine());
-            to.flush();
+            while (true) {
+                to.println(from.readLine());
+            }
         } catch (IOException e) {
             e.printStackTrace();//TODO log
         }
