@@ -1,9 +1,11 @@
-import java.io.*;
-import java.net.InetAddress;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
 
 public class Client {
-    public void start(){
+    public void start() {
         try {
             Socket socket = new Socket("localhost", 9876);
             BufferedReader sockIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -11,26 +13,37 @@ public class Client {
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             PrintStream out = System.out;
 
-            new Thread(() -> {
+            Thread read = new Thread(() -> {
                 transfer(in, sockOut);
-             }).start();
+            });
+            read.setDaemon(true);
+            read.start();
 
-            new Thread(() -> {
+            Thread write = new Thread(() -> {
                 transfer(sockIn, out);
-            }).start();
+            });
+            write.setDaemon(true);
+            write.start();
+
+            read.join();
 
         } catch (IOException e) {
-            e.printStackTrace();//TODO log
+            System.out.println("Error: unable to connect to server!");
+        } catch (InterruptedException e) {
         }
     }
 
     private void transfer(BufferedReader from, PrintStream to) {
         try {
             while (true) {
-                to.println(from.readLine());
+                String str = from.readLine();
+                if (str.startsWith("/exit")){
+                    System.exit(0);
+                }
+                else to.println(str);
             }
         } catch (IOException e) {
-            e.printStackTrace();//TODO log
+            System.out.println("Error: server shuts down unexpectedly!");
         }
     }
 
