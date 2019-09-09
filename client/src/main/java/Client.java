@@ -44,6 +44,7 @@ public class Client {
             }
         } catch (IOException e) {
             System.out.println("Error: server shuts down unexpectedly!");
+            System.exit(1);
         }
     }
 

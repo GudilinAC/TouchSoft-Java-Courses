@@ -67,23 +67,16 @@ public class Server {
 
     private String readInput(SocketChannel channel) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        int length = channel.read(buffer);
+        int length = -1;
+
+        try {
+            length = channel.read(buffer);
+        }
+        catch (IOException e){
+        }
 
         if (length == -1){
-            UserSession session = users.get(channel);
-            if (session.getType())
-                log.info("Client" + session.getUser().getNick() + " disconnected");
-            else
-                log.info("Agent" + session.getUser().getNick() + " disconnected");
-            UserSession pair = session.getPair();
-            if (pair != null) {
-                pair.getChannel().write(ByteBuffer.wrap("System massage: user suddenly disconnected".getBytes()));
-                pair.setPair(null);
-                if (!pair.getType())
-                    freeAgents.add(pair);
-            }
-            users.remove(channel);
-            channel.close();
+            removeUser(channel);
             return null;
         }
 
@@ -93,6 +86,23 @@ public class Server {
         return new String(data);
     }
 
+    private void removeUser(SocketChannel channel) throws IOException{
+        UserSession session = users.get(channel);
+        if (session.getType())
+            log.info("Client " + session.getUser().getNick() + " disconnected");
+        else
+            log.info("Agent " + session.getUser().getNick() + " disconnected");
+        UserSession pair = session.getPair();
+        if (pair != null) {
+            pair.getChannel().write(ByteBuffer.wrap("System massage: user suddenly disconnected".getBytes()));
+            pair.setPair(null);
+            if (!pair.getType())
+                freeAgents.add(pair);
+        }
+        users.remove(channel);
+        channel.close();
+    }
+
     private void processString(SocketChannel channel, String str) throws IOException{
         if (str.startsWith("/register ")) {
             if (str.indexOf("agent ") == 10)
@@ -100,10 +110,12 @@ public class Server {
             else if (str.indexOf("client ") == 10)
                 registerUser(channel, true, str.substring(17));
             else channel.write(ByteBuffer.wrap("System massage: command not recognized. Reissue the command".getBytes()));
-        } else if (str.equals("/leave"))
-            leave(channel);
-        else
-            redirect(channel, str);
+        } else if (users.get(channel).getUser().getNick() != null) {
+            if (str.startsWith("/leave"))
+                leave(channel);
+            else
+                redirect(channel, str);
+        } else channel.write(ByteBuffer.wrap("System massage: you should register first".getBytes()));
     }
 
     private void registerUser(SocketChannel channel, boolean type, String nick) {
@@ -121,6 +133,7 @@ public class Server {
         if (session.getPair() == null) {
             if (freeAgents.isEmpty()) {
                 channel.write(ByteBuffer.wrap("System massage: no available agents. Please wait and try again".getBytes()));
+                return;
             } else {
                 session.setPair(freeAgents.poll());
                 session.getPair().setPair(session);
@@ -140,3 +153,4 @@ public class Server {
         session.setPair(null);
     }
 }
+//TODO make write method and tests

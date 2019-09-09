@@ -6,6 +6,6 @@ public class User {
     }
 
     public void setNick(String nick) {
-        this.nick = nick;
+        this.nick = nick.trim();
     }
 }
