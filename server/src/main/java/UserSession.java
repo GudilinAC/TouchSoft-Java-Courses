@@ -1,4 +1,3 @@
-import java.io.BufferedWriter;
 import java.nio.channels.SocketChannel;
 
 public class UserSession {
