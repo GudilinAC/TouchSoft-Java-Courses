@@ -1,3 +1,5 @@
+package org.touchsoft;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -9,7 +11,7 @@ public class UserController {
 
     private final Queue<UserSession> freeAgents = new ArrayDeque<>();
 
-    public boolean ifRegistered(UserSession session){
+    public boolean ifRegistered(UserSession session) {
         return session.getUser().getNick() != null;
     }
 
@@ -29,19 +31,19 @@ public class UserController {
             if (freeAgents.isEmpty())
                 return null;
             else {
+                if (!session.getType()) return null;
                 session.setPair(freeAgents.poll());
                 session.getPair().setPair(session);
-                log.info("User " + session.getUser().getNick() + " join chat with agent " + session.getPair().getUser().getNick());
+                log.info("Client " + session.getUser().getNick() + " join chat with agent " + session.getPair().getUser().getNick());
             }
         return session.getPair();
     }
 
     public UserSession leave(UserSession session) {
-        UserSession agent = null;
         if (session.getPair() == null) return null;
-        if (session.getType())
-            agent = session.getPair();
-        log.info("User " + session.getUser().getNick() + " left chat with agent " + agent.getUser().getNick());
+        if (!session.getType()) return null;
+        UserSession agent = session.getPair();
+        log.info("Client " + session.getUser().getNick() + " left chat with agent " + agent.getUser().getNick());
         agent.setPair(null);
         session.setPair(null);
         return agent;
@@ -53,7 +55,9 @@ public class UserController {
         else
             log.info("Agent " + session.getUser().getNick() + " disconnected");
         UserSession pair = session.getPair();
-        if (pair != null) {
+        if (!session.getType() && freeAgents.contains(session))
+            freeAgents.remove(session);
+        else if (pair != null) {
             pair.setPair(null);
             if (!pair.getType())
                 freeAgents.add(pair);

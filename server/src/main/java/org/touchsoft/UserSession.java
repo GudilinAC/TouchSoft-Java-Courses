@@ -1,3 +1,5 @@
+package org.touchsoft;
+
 import java.nio.channels.SocketChannel;
 
 public class UserSession {
@@ -10,6 +12,7 @@ public class UserSession {
 
     public UserSession(SocketChannel channel) {
         this.channel = channel;
+        this.user = new User();
     }
 
     public Boolean getType() {

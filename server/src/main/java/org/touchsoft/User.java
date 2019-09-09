@@ -1,3 +1,5 @@
+package org.touchsoft;
+
 public class User {
     private String nick;
 

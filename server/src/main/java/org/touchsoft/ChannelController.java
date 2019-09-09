@@ -1,3 +1,5 @@
+package org.touchsoft;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -32,9 +34,7 @@ public class ChannelController {
     }
 
     private UserSession sessionInit(SocketChannel newChannel) {
-        UserSession session = new UserSession(newChannel);
-        session.setUser(new User());
-        return session;
+        return new UserSession(newChannel);
     }
 
     public void read(SelectionKey key) throws IOException {
