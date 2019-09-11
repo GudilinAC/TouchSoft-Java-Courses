@@ -42,7 +42,10 @@ public class Client {
                 if (str.startsWith("/exit")){
                     System.exit(0);
                 }
-                else to.println(str);
+                else {
+                    to.println(str);
+                    to.flush();
+                }
             }
         } catch (IOException e) {
             System.out.println("Error: server shuts down unexpectedly!");

@@ -13,8 +13,9 @@
     </properties>
 
     <modules>
-        <module>server</module>
-        <module>client</module>
+        <module>consoleServer</module>
+        <module>consoleClient</module>
+        <module>web</module>
     </modules>
 
     <dependencies>
@@ -22,6 +23,12 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>8.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -40,7 +47,7 @@
 <!--
 java -jar server/target/server-1.0-SNAPSHOT.jar
 java -jar client/target/client-1.0-SNAPSHOT.jar
-/register client aaaaaa
-/register agent bbbbb
+/register client Alina
+/register agent Bob
 -->
 

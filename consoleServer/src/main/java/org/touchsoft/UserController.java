@@ -43,7 +43,7 @@ public class UserController {
         if (session.getPair() == null) return null;
         if (!session.getType()) return null;
         UserSession agent = session.getPair();
-        log.info("Client " + session.getUser().getNick() + " left chat with agent " + agent.getUser().getNick());
+        log.info("Client " + session.getUser().getNick() + " leave chat with agent " + agent.getUser().getNick());
         agent.setPair(null);
         session.setPair(null);
         return agent;

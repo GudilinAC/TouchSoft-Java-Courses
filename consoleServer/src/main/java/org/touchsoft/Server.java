@@ -11,13 +11,14 @@ import java.util.Iterator;
 public class Server {
     private final static Logger log = LogManager.getLogger(Server.class);
     private final ChannelController channelController;
+    private final Selector selector;
 
-    public Server(ChannelController controller){
+    public Server(ChannelController controller, Selector selector){
         this.channelController = controller;
+        this.selector = selector;
     }
 
     public void start() {
-        Selector selector = ServerFactory.createServer("localhost");
 
         try {
             if (selector != null)
@@ -32,6 +33,8 @@ public class Server {
                                 channelController.accept(key);
                             else if (key.isReadable())
                                 channelController.read(key);
+                            else if (key.isWritable())
+                                channelController.write(key);
                         }
                     }
                 }
@@ -40,6 +43,4 @@ public class Server {
             log.warn("Server shuts down");
         }
     }
-
-
 }
