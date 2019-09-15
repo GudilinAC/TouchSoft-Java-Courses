@@ -7,15 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Chat")
-public class ChatServlet extends HttpServlet {
-    ChatController controller = new ChatController();
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
-
+@WebServlet(name = "/")
+public class MainChatServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 }
