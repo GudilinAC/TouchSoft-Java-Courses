@@ -8,7 +8,7 @@ public class UserSession {
 
     //false - agent,
     //true - client
-    private Boolean type;
+    private Boolean isClient;
     private UserSession pair;
     private SocketChannel channel;
     private User user;
@@ -20,12 +20,12 @@ public class UserSession {
         this.user = new User();
     }
 
-    public Boolean getType() {
-        return type;
+    public Boolean isClient() {
+        return isClient;
     }
 
-    public void setType(Boolean type) {
-        this.type = type;
+    public void isClient(Boolean isClient) {
+        this.isClient = isClient;
     }
 
     public UserSession getPair() {
@@ -58,5 +58,13 @@ public class UserSession {
 
     public LinkedList<String> getReceiveList() {
         return receiveList;
+    }
+
+    public void receive(String str){
+        receiveList.addLast(str);
+    }
+
+    public void store(String str){
+        sendList.addLast(str);
     }
 }

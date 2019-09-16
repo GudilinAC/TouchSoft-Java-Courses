@@ -15,10 +15,10 @@ public class UserController {
         return session.getUser().getNick() != null;
     }
 
-    public void registerUser(UserSession session, boolean type, String nick) {
-        session.setType(type);
+    public void registerUser(UserSession session, boolean isClient, String nick) {
+        session.isClient(isClient);
         session.getUser().setNick(nick);
-        if (type)
+        if (isClient)
             log.info("Registered client " + nick);
         else {
             freeAgents.add(session);
@@ -31,9 +31,12 @@ public class UserController {
             if (freeAgents.isEmpty())
                 return null;
             else {
-                if (!session.getType()) return null;
+                if (!session.isClient()) return null;
                 session.setPair(freeAgents.poll());
                 session.getPair().setPair(session);
+                String str;
+                while (null != (str = session.getSendList().pollFirst()))
+                    session.getPair().getReceiveList().addLast(str);
                 log.info("Client " + session.getUser().getNick() + " join chat with agent " + session.getPair().getUser().getNick());
             }
         return session.getPair();
@@ -41,7 +44,7 @@ public class UserController {
 
     public UserSession leave(UserSession session) {
         if (session.getPair() == null) return null;
-        if (!session.getType()) return null;
+        if (!session.isClient()) return null;
         UserSession agent = session.getPair();
         log.info("Client " + session.getUser().getNick() + " leave chat with agent " + agent.getUser().getNick());
         agent.setPair(null);
@@ -50,16 +53,16 @@ public class UserController {
     }
 
     public UserSession removeUser(UserSession session) {
-        if (session.getType())
+        if (session.isClient())
             log.info("Client " + session.getUser().getNick() + " disconnected");
         else
             log.info("Agent " + session.getUser().getNick() + " disconnected");
         UserSession pair = session.getPair();
-        if (!session.getType() && freeAgents.contains(session))
+        if (!session.isClient() && freeAgents.contains(session))
             freeAgents.remove(session);
         else if (pair != null) {
             pair.setPair(null);
-            if (!pair.getType())
+            if (!pair.isClient())
                 freeAgents.add(pair);
         }
         return pair;
