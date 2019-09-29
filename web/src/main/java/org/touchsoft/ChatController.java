@@ -18,20 +18,19 @@ public class ChatController {
         return instance;
     }
 
-    private final Map<Integer, UserSession> users = new HashMap<>();
+    private final Map<String, UserSession> users = new HashMap<>();
     private final UserController userController = new UserController();
 
-    public String getMessages(int id){
+    public String getMessages(String id){
         return String.join("\n", users.get(id).getReceiveList());
     }
 
-    public int getNewUserId(){
-        UserSession session = new UserSession(IdGen.getId());
+    public void newSession(String id){
+        UserSession session = new UserSession(id);
         users.put(session.Id, session);
-        return session.Id;
     }
 
-    public void processString(int id, String str){
+    public void processString(String id, String str){
         if (str.startsWith("/register ")) {
             if (str.indexOf("agent ") == 10)
                 userController.registerUser(users.get(id), false, str.substring(16));
@@ -48,7 +47,7 @@ public class ChatController {
         } else send(id, "[System] You should register first");
     }
 
-    private void removeUser(int id) {
+    private void removeUser(String id) {
         UserSession session = users.get(id);
         UserSession pair = userController.removeUser(session);
         if (pair != null)
@@ -56,7 +55,7 @@ public class ChatController {
         users.remove(id);
     }
 
-    private void redirect(int id, String str)  {
+    private void redirect(String id, String str)  {
         UserSession session = users.get(id);
         UserSession pairSession = userController.getPair(session);
         if (pairSession != null)
@@ -67,18 +66,18 @@ public class ChatController {
         }
     }
 
-    private void leave(int id) {
+    private void leave(String id) {
         UserSession session = users.get(id);
         UserSession pair = userController.leave(session);
         if (pair != null)
             send(pair.Id, "[System] client left");
     }
 
-    private void send(int id, String str)  {
+    private void send(String id, String str)  {
         users.get(id).receive(str);
     }
 
-    private void store(int id, String str){
+    private void store(String id, String str){
         users.get(id).store(str);
     }
 }

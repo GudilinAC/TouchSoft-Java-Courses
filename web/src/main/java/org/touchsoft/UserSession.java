@@ -4,7 +4,7 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 
 public class UserSession {
-    public final int Id;
+    public final String Id;
 
     //false - agent,
     //true - client
@@ -15,7 +15,7 @@ public class UserSession {
     private LinkedList<String> sendList;
     private LinkedList<String> receiveList;
 
-    public UserSession(int id) {
+    public UserSession(String id) {
         this.Id = id;
         this.user = new User();
     }
