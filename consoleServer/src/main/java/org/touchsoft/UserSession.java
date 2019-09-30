@@ -5,6 +5,10 @@ import java.nio.channels.SocketChannel;
 public class UserSession {
     //false - agent,
     //true - client
+
+    //variable type is unclear
+    //you can use enum userType {AGENT, CLIENT, ...}
+    //then you can add some type of users in your app
     private Boolean type;
     private UserSession pair;
     private SocketChannel channel;

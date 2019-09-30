@@ -18,6 +18,7 @@ public class Client {
             Thread read = new Thread(() -> {
                 transfer(in, sockOut);
             });
+            //don't use daemon threads for input-output
             read.setDaemon(true);
             read.start();
 
@@ -40,6 +41,8 @@ public class Client {
             while (true) {
                 String str = from.readLine();
                 if (str.startsWith("/exit")){
+                    //send message to server that you exit. server can sending to you some data in that moment
+                    //you lose that data
                     System.exit(0);
                 }
                 else {

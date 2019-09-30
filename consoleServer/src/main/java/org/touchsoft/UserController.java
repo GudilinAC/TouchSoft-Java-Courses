@@ -11,6 +11,7 @@ public class UserController {
 
     private final Queue<UserSession> freeAgents = new ArrayDeque<>();
 
+    //isRegistered is cleaner
     public boolean ifRegistered(UserSession session) {
         return session.getUser().getNick() != null;
     }
@@ -38,7 +39,8 @@ public class UserController {
             }
         return session.getPair();
     }
-
+    //!!check. it's unstable. for example: when you have only one client and one agent
+    //client enter "/leave" and that's all, nothing work.
     public UserSession leave(UserSession session) {
         if (session.getPair() == null) return null;
         if (!session.getType()) return null;
