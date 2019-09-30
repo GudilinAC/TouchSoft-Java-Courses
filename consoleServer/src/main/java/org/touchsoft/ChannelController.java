@@ -64,6 +64,10 @@ public class ChannelController {
         int length = -1;
 
         try {
+            //!!! here you have to use some buffer handler for searching whole messages in buffer
+            //if client send message longer then 1024 then you'll send pieces of this message
+            //at first you have to read whole message and then send it to client
+            //(now it works because your client read data from buffer only when he find '\n')
             length = channel.read(buffer);
         } catch (IOException e) {
         }
@@ -92,7 +96,10 @@ public class ChannelController {
     }
 
     private void processString(SocketChannel channel, String str) throws IOException {
+        //!!client can register when he already registered
         if (str.startsWith("/register ")) {
+            //you can use here regEx. if str doesn't contain "agent " indexOf will reach the end of str
+            //regEx can be faster
             if (str.indexOf("agent ") == 10)
                 userController.registerUser(users.get(channel), false, str.substring(16));
             else if (str.indexOf("client ") == 10)
@@ -111,6 +118,9 @@ public class ChannelController {
         UserSession pairSession = userController.getPair(session);
         if (pairSession != null)
             toSend(pairSession.getChannel(), str);
+        //!!!add '\n' in the end of the sending str. your client doesn't read this.
+        //!!!save messages that client sends when he hasn't a pair. when you set him pair, send saved messages
+            // (check conditions of the first task)
         else toSend(channel, "System massage: no available agents. Please wait and try again");
     }
 
