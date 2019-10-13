@@ -1,4 +1,4 @@
-package org.touchsoft;
+package org.touchsoft.model;
 
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;

@@ -1,11 +1,9 @@
-package org.touchsoft;
+package org.touchsoft.controller;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.touchsoft.model.UserSession;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.util.*;
 
 public class ChatController {

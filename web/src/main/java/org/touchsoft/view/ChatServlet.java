@@ -1,4 +1,6 @@
-package org.touchsoft;
+package org.touchsoft.view;
+
+import org.touchsoft.controller.ChatController;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

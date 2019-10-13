@@ -1,4 +1,4 @@
-package org.touchsoft;
+package org.touchsoft.controller;
 
 public class IdGen {
     private static int id = 1;

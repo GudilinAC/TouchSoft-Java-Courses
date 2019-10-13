@@ -1,7 +1,9 @@
-package org.touchsoft;
+package org.touchsoft.controller;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.touchsoft.data.Data;
+import org.touchsoft.model.UserSession;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -9,7 +11,7 @@ import java.util.Queue;
 public class UserController {
     private final static Logger log = LogManager.getLogger(UserController.class);
 
-    private final Queue<UserSession> freeAgents = new ArrayDeque<>();
+    private final Data data = Data.instance;
 
     public boolean ifRegistered(UserSession session) {
         return session.getUser().getNick() != null;
@@ -21,18 +23,19 @@ public class UserController {
         if (isClient)
             log.info("Registered client " + nick);
         else {
-            freeAgents.add(session);
+            data.freeAgents.add(session);
             log.info("Registered agent " + nick);
         }
     }
 
     public UserSession getPair(UserSession session) {
         if (session.getPair() == null)
-            if (freeAgents.isEmpty())
+            if (data.freeAgents.isEmpty())
                 return null;
             else {
                 if (!session.isClient()) return null;
-                session.setPair(freeAgents.poll());
+                session.setPair(data.freeAgents.get(0));
+                data.freeAgents.remove(0);
                 session.getPair().setPair(session);
                 String str;
                 while (null != (str = session.getSendList().pollFirst()))
@@ -58,12 +61,12 @@ public class UserController {
         else
             log.info("Agent " + session.getUser().getNick() + " disconnected");
         UserSession pair = session.getPair();
-        if (!session.isClient() && freeAgents.contains(session))
-            freeAgents.remove(session);
+        if (!session.isClient() && data.freeAgents.contains(session))
+            data.freeAgents.remove(session);
         else if (pair != null) {
             pair.setPair(null);
             if (!pair.isClient())
-                freeAgents.add(pair);
+                data.freeAgents.add(pair);
         }
         return pair;
     }
